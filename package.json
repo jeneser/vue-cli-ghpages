@@ -1,7 +1,10 @@
 {
   "name": "vue-cli-ghpages",
   "version": "0.0.1",
-  "description": "GitHub pages for vue-cli users. Publish to any gh-pages branch on GitHub.",
+  "description": "GitHub pages for vue-cli users. Publish to gh-pages branch on GitHub.",
+  "files": [
+    "src"
+  ],
   "main": "src/index.js",
   "bin": {
     "vue-cli-ghpages": "src/bin/vue-cli-ghpages",
@@ -19,7 +22,9 @@
     "email": "jeneserwang@gmail.com"
   },
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "commander": "^2.11.0"
+  },
   "keywords": [
     "vue",
     "vue.js",
