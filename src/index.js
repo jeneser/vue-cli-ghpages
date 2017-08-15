@@ -4,6 +4,7 @@ var fse = require('fs-extra');
 var chalk = require('chalk');
 var ghpages = require('gh-pages');
 var denodeify = require('denodeify');
+var hjson = require('./hack/hack.json');
 
 exports.run = function(options) {
   // config
@@ -11,7 +12,6 @@ exports.run = function(options) {
 
   var access = denodeify(fs.access);
   var publish = denodeify(ghpages.publish);
-  var readFile = denodeify(fs.readFile);
 
   var dir = path.join(process.cwd(), options.dir);
 
@@ -51,13 +51,17 @@ exports.run = function(options) {
             .outputFile(path.join(process.cwd(), '/dist/CNAME'), options.CNAME)
             .catch(error => console.log(error));
           // Output 404.html
-          readFile('hack/404.html', {
-            encoding: 'UTF-8'
-          })
-          .then((data) => {
-            console.log(data);
-          })
+          fse
+            .outputFile(path.join(process.cwd(), '/dist/404.html'), hjson.notFoundHtml)
+            .catch(error => console.log(error))
+        } else {
+          // Output 404.html
+          fse
+            .outputFile(path.join(process.cwd(), '/dist/404.html'), hjson.notFoundHtml)
+            .catch(error => console.log(error))
         }
+        
+        // Index redirect
 
       })
       // Publish
