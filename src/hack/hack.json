@@ -2,5 +2,5 @@
   "nojekyll": ".nojekyll",
   "CNAME": "",
   "notFoundHtml": "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Single Page Apps for GitHub Pages</title><script type='text/javascript'>var segmentCount = 1;var l = window.location;l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + l.pathname.split('/').slice(0, 1 + segmentCount).join('/') + '/?p=/' + l.pathname.slice(1).split('/').slice(segmentCount).join('/').replace(/&/g, '~and~') + (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') + l.hash);</script></head><body></body></html>",
-  "indexRedirect": "<script type='text/javascript'>!function(i){if(i.search){var a={}i.search.slice(1).split('&').forEach(function(i){var l=i.split('=');a[l[0]]=l.slice(1).join('=').replace(/~and~/g,'&')}),void 0!==a.p&&window.history.replaceState(null,null,i.pathname.slice(0,-1)+(a.p||'')+(a.q?'?'+a.q:'')+i.hash)}}(window.location)</script>"
+  "indexRedirect": "<script type='text/javascript'>!function(i){var flag='indexRedirect';if(i.search){var a={};i.search.slice(1).split('&').forEach(function(i){var l=i.split('=');a[l[0]]=l.slice(1).join('=').replace(/~and~/g,'&')}),void 0!==a.p&&window.history.replaceState(null,null,i.pathname.slice(0,-1)+(a.p||'')+(a.q?'?'+a.q:'')+i.hash)}}(window.location)</script>"
 }
