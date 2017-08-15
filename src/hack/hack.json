@@ -1,0 +1,26 @@
+/**
+ * The Single Page App Hack for GitHub Pages
+ * MIT License
+ * Copyright (c) 2017 jeneser
+ * Copyright (c) 2016 Rafael Pedicini
+ * @source - https://github.com/rafrex/spa-github-pages
+ *
+ * @nojekyll - Turns off Jekyll for GitHub Pages
+ *
+ * @CNAME - Setting up a custom domain
+ *
+ * @notFoundHtml - The custom 404.html page contains a script that takes the
+ * current url and converts the path and query string into just a query string, * and then redirects the browser to the new url with only a query string and
+ * hash fragment. 
+ *
+ * @indexRedirect - This script checks to see if a redirect is present in the
+ * query string and converts it back into the correct url and adds it to the
+ * browser's history using window.history.replaceState(...)
+ */
+
+{
+  "nojekyll": ".nojekyll",
+  "CNAME": "",
+  "notFoundHtml": "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Single Page Apps for GitHub Pages</title><script type='text/javascript'>var segmentCount = 1;var l = window.location;l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + l.pathname.split('/').slice(0, 1 + segmentCount).join('/') + '/?p=/' + l.pathname.slice(1).split('/').slice(segmentCount).join('/').replace(/&/g, '~and~') + (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') + l.hash);</script></head><body></body></html>",
+  "indexRedirect": "<script type='text/javascript'>!function(i){if(i.search){var a={}i.search.slice(1).split('&').forEach(function(i){var l=i.split('=');a[l[0]]=l.slice(1).join('=').replace(/~and~/g,'&')}),void 0!==a.p&&window.history.replaceState(null,null,i.pathname.slice(0,-1)+(a.p||'')+(a.q?'?'+a.q:'')+i.hash)}}(window.location)</script>"
+}
