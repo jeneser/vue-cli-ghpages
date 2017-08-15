@@ -22,6 +22,11 @@ exports.run = function(options) {
     };
   }
 
+  // for your convenience - here you can hack credentials into the repository URL
+  if (process.env.GH_TOKEN && options.repo) {
+    options.repo = options.repo.replace('GH_TOKEN', process.env.GH_TOKEN);
+  }
+
   // clean the cache directory
   ghpages.clean();
 
@@ -134,9 +139,12 @@ exports.run = function(options) {
             );
           });
       })
+      /**
+       * Publish via ghpages
+       */
       .then(() => {
-        console.log('Published ok!');
-        // publish(dir, options)
+        console.log('Please wait a moment...');
+        return publish(dir, options);
       })
       // Success
       .then(() => console.log(chalk.green('Successfully published!\n')))
