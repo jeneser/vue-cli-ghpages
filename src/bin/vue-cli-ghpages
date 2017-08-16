@@ -12,8 +12,9 @@ program
   .option('-b, --branch <branch>', 'The git branch to push your live demo', 'gh-pages')
   .option('-n, --name <name>', 'The git user-name which is associated with this commit')
   .option('-e, --email <email>', 'The git user-email which is associated with this commit')
+  .option('-r, --repo <repo>', 'The repository URL, if the current working directory is not a git repository. must be wrapped in quotes.')
   .option('-C, --CNAME <CNAME>', 'Setting up a custom domain, Like: demo.example.com')
-  .option('--pre-deploy', 'Pre-deploy: Check the environment and configuration')
+  .option('-P, --pre-deploy', 'Pre-deploy: Check the environment and configuration')
   .parse(process.argv);
 
 index.run(program)

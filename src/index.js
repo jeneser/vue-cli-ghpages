@@ -1,7 +1,7 @@
 var path = require('path');
 var fs = require('fs');
 var fse = require('fs-extra');
-var chalk = require('chalk');
+var ora = require('ora');
 var ghpages = require('gh-pages');
 var denodeify = require('denodeify');
 var hjson = require('./hack/hack.json');
@@ -10,8 +10,10 @@ exports.run = function(options) {
   options = options || {};
 
   var access = denodeify(fs.access);
-  var publish = denodeify(ghpages.publish);
   var readFile = denodeify(fs.readFile);
+  var publish = denodeify(ghpages.publish);
+
+  const spinner = ora('Start deployment...').start();
 
   var dir = path.join(process.cwd(), options.dir);
 
@@ -20,11 +22,6 @@ exports.run = function(options) {
       name: options.name,
       email: options.email
     };
-  }
-
-  // for your convenience - here you can hack credentials into the repository URL
-  if (process.env.GH_TOKEN && options.repo) {
-    options.repo = options.repo.replace('GH_TOKEN', process.env.GH_TOKEN);
   }
 
   // clean the cache directory
@@ -37,12 +34,10 @@ exports.run = function(options) {
        */
       .then(() => access(dir, fs.constants.F_OK))
       .catch(error => {
-        console.error(
-          chalk.white.bgRed('ERR!') +
-            chalk.red(
-              ' Dist folder does not exist. Check the dir --dir parameter or build the project first!\n'
-            )
+        spinner.fail(
+          'Dist folder does not exist. Check the dir --dir parameter or build the project first!\n'
         );
+
         return Promise.reject(error);
       })
       /**
@@ -51,11 +46,8 @@ exports.run = function(options) {
       .then(() => {
         // Create .nojekyll
         fse.ensureFile(path.join(dir, '.nojekyll')).catch(error => {
-          console.warn(
-            chalk.white.bgYellow('WARN') +
-              chalk.yellow(
-                ' .nojekyll could not be created. Please create manually. Continuing without an error.\n'
-              )
+          spinner.warn(
+            '.nojekyll could not be created. Please create manually. Continuing without an error.\n'
           );
         });
 
@@ -65,12 +57,7 @@ exports.run = function(options) {
           fse
             .outputFile(path.join(dir, 'CNAME'), options.CNAME)
             .catch(error => {
-              console.warn(
-                chalk.white.bgYellow('WARN') +
-                  chalk.yellow(
-                    ' CNAME could not be created. Please create manually. Continuing without an error.\n'
-                  )
-              );
+              spinner.warn('CNAME could not be created. Please create manually. Continuing without an error.\n');
             });
 
           // Output 404.html, setting segmentCount = 0
@@ -83,26 +70,14 @@ exports.run = function(options) {
               )
             )
             .catch(error => {
-              console.error(
-                chalk.white.bgRed('ERR!') +
-                  chalk.red(
-                    ' 404.html could not be created. An error occurred:\n %s'
-                  ),
-                error
-              );
+              spinner.fail('404.html could not be created. An error occurred:\n' + error);
             });
         } else {
           // Output default 404.html for Project Pages site
           fse
             .outputFile(path.join(dir, '404.html'), hjson.notFoundHtml)
             .catch(error => {
-              console.error(
-                chalk.white.bgRed('ERR!') +
-                  chalk.red(
-                    ' 404.html could not be created. An error occurred:\n %s'
-                  ),
-                error
-              );
+              spinner.fail('404.html could not be created. An error occurred:\n' + error);
             });
         }
 
@@ -119,37 +94,27 @@ exports.run = function(options) {
                   data.replace(/<head>/, '<head>' + hjson.indexRedirect)
                 )
                 .catch(error => {
-                  console.error(
-                    chalk.white.bgRed('ERR!') +
-                      chalk.red(
-                        ' index.html could not be created. An error occurred:\n %s'
-                      ),
-                    error
-                  );
+                  spinner.fail('index.html could not be created. An error occurred:\n' + error);
                 });
             }
           })
           .catch(error => {
-            console.error(
-              chalk.white.bgRed('ERR!') +
-                chalk.red(
-                  ' index.html could not be created. An error occurred:\n %s'
-                ),
-              error
-            );
+            spinner.fail('index.html could not be created. An error occurred:\n' + error);
           });
       })
       /**
        * Publish via ghpages
        */
       .then(() => {
-        console.log('Please wait a moment...');
+        spinner.text = 'Deploying, please wait a moment...';
         return publish(dir, options);
       })
       // Success
-      .then(() => console.log(chalk.green('Successfully published!\n')))
+      .then(() => {
+        spinner.succeed('Successfully deployed!');
+      })
       .catch(error => {
-        console.error(chalk.red('An error occurred:\n %s'), error);
+        spinner.fail('Error occurred:\n' + error);
         return Promise.reject(error);
       })
   );
