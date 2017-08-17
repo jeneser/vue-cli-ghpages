@@ -8,7 +8,7 @@ program
   .version(pjson.version)
   .description(pjson.description)
   .option('-d, --dir <dir>', 'The directory you will deploy, relative to the project-root', 'dist')
-  .option('-m, --message <message>', 'The commit message, must be wrapped in quotes', 'Vgh: Update live demo')
+  .option('-m, --message <message>', 'The commit message, must be wrapped in quotes', 'Vcg: Update live demo')
   .option('-b, --branch <branch>', 'The git branch to push your live demo', 'gh-pages')
   .option('-n, --name <name>', 'The git user-name which is associated with this commit')
   .option('-e, --email <email>', 'The git user-email which is associated with this commit')

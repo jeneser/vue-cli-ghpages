@@ -8,7 +8,7 @@
   "main": "src/index.js",
   "bin": {
     "vue-cli-ghpages": "src/bin/vue-cli-ghpages",
-    "vgh": "src/bin/vue-cli-ghpages"
+    "vcg": "src/bin/vue-cli-ghpages"
   },
   "repository": {
     "type": "git",
