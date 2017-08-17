@@ -13,6 +13,9 @@ exports.run = function(options) {
   var readFile = denodeify(fs.readFile);
   var publish = denodeify(ghpages.publish);
 
+  var ensureFile = fse.ensureFile;
+  var outputFile = fse.outputFile;
+
   const spinner = ora('Start deployment...').start();
 
   var dir = path.join(process.cwd(), options.dir);
@@ -35,72 +38,74 @@ exports.run = function(options) {
       .then(() => access(dir, fs.constants.F_OK))
       .catch(error => {
         spinner.fail(
-          'Dist folder does not exist. Check the dir --dir parameter or build the project first!\n'
+          'Dist folder does not exist. Check the dir --dir parameter or build the project first!'
         );
-
         return Promise.reject(error);
       })
       /**
-       * The Single Page App hack for GitHub Pages
+       * Create .nojekyll
        */
-      .then(() => {
-        // Create .nojekyll
-        fse.ensureFile(path.join(dir, '.nojekyll')).catch(error => {
-          spinner.warn(
-            '.nojekyll could not be created. Please create manually. Continuing without an error.\n'
-          );
-        });
-
-        // Setting up a custom domain
-        if (options.CNAME) {
-          // Output CNAME
-          fse
-            .outputFile(path.join(dir, 'CNAME'), options.CNAME)
-            .catch(error => {
-              spinner.warn('CNAME could not be created. Please create manually. Continuing without an error.\n');
-            });
-
-          // Output 404.html, setting segmentCount = 0
-          fse
-            .outputFile(
-              path.join(dir, '404.html'),
-              hjson.notFoundHtml.replace(
+      .then(() => ensureFile(path.join(dir, '.nojekyll')))
+      .catch(error =>
+        spinner.warn(
+          '.nojekyll could not be created. Please create manually. Continuing without an error.'
+        )
+      )
+      /**
+       * Setting up custom domain
+       */
+      .then(() => ensureFile(path.join(dir, 'CNAME')))
+      .then(() => readFile(path.join(dir, 'CNAME'), 'utf8'))
+      .then(data =>
+        outputFile(
+          path.join(dir, 'CNAME'),
+          options.CNAME ? options.CNAME : data.replace(/\s+/, '')
+        )
+      )
+      .catch(() =>
+        spinner.warn(
+          'CNAME could not be created. Please create manually. Continuing without an error.'
+        )
+      )
+      /**
+       * Output 404.html, setting segmentCount
+       */
+      .then(() => readFile(path.join(dir, 'CNAME'), 'utf8'))
+      .then(data =>
+        outputFile(
+          path.join(dir, '404.html'),
+          data
+            ? hjson.notFoundHtml.replace(
                 /segmentCount\s=\s1/,
                 'segmentCount = 0'
               )
-            )
-            .catch(error => {
-              spinner.fail('404.html could not be created. An error occurred:\n' + error);
-            });
-        } else {
-          // Output default 404.html for Project Pages site
-          fse
-            .outputFile(path.join(dir, '404.html'), hjson.notFoundHtml)
-            .catch(error => {
-              spinner.fail('404.html could not be created. An error occurred:\n' + error);
-            });
-        }
-
-        /**
-         * Inject redirect code to index.html
-         */
-        readFile(path.join(dir, 'index.html'), 'utf8')
-          .then(data => {
-            // Inject only once redirect code
-            if (data.indexOf('indexRedirect') === -1) {
-              fse
-                .outputFile(
-                  path.join(dir, 'index.html'),
-                  data.replace(/<head>/, '<head>' + hjson.indexRedirect)
-                )
-                .catch(error => {
-                  spinner.fail('index.html could not be created. An error occurred:\n' + error);
-                });
-            }
-          })
-          .catch(error => {
-            spinner.fail('index.html could not be created. An error occurred:\n' + error);
-          });
+            : hjson.notFoundHtml
+        )
+      )
+      .catch(error => {
+        spinner.fail(
+          '404.html could not be created. An error occurred:\n' + error
+        );
+        return Promise.reject(error);
+      })
+      /**
+       * Inject redirect code to index.html
+       */
+      .then(() => readFile(path.join(dir, 'index.html'), 'utf8'))
+      .then(data =>
+        outputFile(
+          path.join(dir, 'index.html'),
+          data.includes('indexRedirect')
+            ? data
+            : data.replace(/<head>/, '<head>' + hjson.indexRedirect)
+        )
+      )
+      .catch(error => {
+        spinner.fail(
+          'Unable to inject redirection code to index.html. Error occurred:\n' +
+            error
+        );
+        return Promise.reject(error);
       })
       /**
        * Publish via ghpages
