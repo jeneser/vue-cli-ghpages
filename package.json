@@ -1,7 +1,7 @@
 {
   "name": "vue-cli-ghpages",
-  "version": "0.0.1",
-  "description": "GitHub pages for vue-cli users. Publish to gh-pages branch on GitHub.",
+  "version": "1.0.0",
+  "description": "GitHub pages for vue-cli users. Publish to gh-pages branch on GitHub. The Single-Page App Hack for GitHub Pages.",
   "files": [
     "src"
   ],

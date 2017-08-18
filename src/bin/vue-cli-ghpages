@@ -14,7 +14,6 @@ program
   .option('-e, --email <email>', 'The git user-email which is associated with this commit')
   .option('-r, --repo <repo>', 'The repository URL, if the current working directory is not a git repository. must be wrapped in quotes.')
   .option('-C, --CNAME <CNAME>', 'Setting up a custom domain, Like: demo.example.com')
-  .option('-P, --pre-deploy', 'Pre-deploy: Check the environment and configuration')
   .parse(process.argv);
 
 index.run(program)
