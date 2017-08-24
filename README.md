@@ -1,3 +1,5 @@
+**DANGER: Hack code bug, wontfix!**
+
 <p>
   <img src="logo.png" alt="logo"  width="150px" height="150px"/>
 </p>
